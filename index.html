@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#17181C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<title>Log Fase 4</title>
+<style>
+  :root{
+    --paper:#FBFAF7; --ink:#17181C; --muted:#6C6A63; --rule:#E2DFD6;
+    --accent:#E4572E; --soft:#F1EFE8; --ok:#1F8A5B; --field:#FFFFFF;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);}
+  body{font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;line-height:1.4;font-size:16px;}
+  .mono{font-family:"Roboto Mono","SF Mono","Consolas",monospace;}
+
+  .appbar{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;padding:12px 16px;
+    display:flex;align-items:center;justify-content:space-between;}
+  .appbar .t{font-weight:800;font-size:15px;}
+  .appbar .t span{color:var(--accent);}
+  .status{font-size:10.5px;opacity:.85;text-align:right;line-height:1.25;}
+  .status b{color:#fff;}
+
+  .tabs{position:sticky;top:46px;z-index:4;display:flex;background:var(--paper);border-bottom:1px solid var(--rule);}
+  .tabs button{flex:1;border:0;background:none;padding:13px 4px;font-size:12.5px;font-weight:700;color:var(--muted);
+    letter-spacing:.04em;border-bottom:2.5px solid transparent;}
+  .tabs button.on{color:var(--ink);border-color:var(--accent);}
+
+  main{max-width:680px;margin:0 auto;padding:16px 14px 90px;}
+  h2.vh{font-size:18px;margin:4px 0 14px;font-weight:800;}
+
+  .banner{background:#FFF3EC;border:1px solid #F2C6B4;border-radius:9px;padding:11px 13px;font-size:13px;margin-bottom:14px;font-weight:600;}
+
+  .ctrlrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+  label.fld{display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  input[type=date],input.txt{font-size:16px;padding:11px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--field);color:var(--ink);font-family:inherit;}
+  .chips{display:flex;gap:8px;}
+  .chip{padding:11px 20px;border:1.5px solid var(--rule);border-radius:8px;background:var(--field);font-weight:800;font-size:15px;color:var(--muted);}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .wu{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;}
+  .wu input{width:20px;height:20px;accent-color:var(--accent);}
+
+  .card{border:1px solid var(--rule);border-radius:10px;background:var(--field);padding:12px 12px 14px;margin-bottom:11px;}
+  .card .nm{font-weight:800;font-size:15px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+  .card .tg{font-size:9px;letter-spacing:.1em;background:var(--accent);color:#fff;border-radius:3px;padding:1px 5px;font-weight:700;}
+  .card .hint{font-size:11.5px;color:var(--muted);margin:2px 0 9px;font-weight:600;}
+  .setrow{display:flex;gap:7px;align-items:flex-end;}
+  .ipt{display:flex;flex-direction:column;gap:3px;flex:1;}
+  .ipt span{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .ipt input{width:100%;font-size:16px;padding:9px 8px;border:1px solid var(--rule);border-radius:7px;background:var(--paper);text-align:center;font-family:inherit;color:var(--ink);}
+  .ipt.load input{background:#FFF7F2;border-color:#F2C6B4;font-weight:800;}
+  .ipt.notew{flex:none;width:100%;margin-top:8px;}
+  .ipt.notew input{text-align:left;}
+
+  .btn{display:block;width:100%;border:0;border-radius:10px;padding:15px;font-size:16px;font-weight:800;background:var(--accent);color:#fff;margin-top:6px;font-family:inherit;}
+  .btn.sec{background:var(--ink);}
+  .btn.ghost{background:var(--field);color:var(--ink);border:1.5px solid var(--rule);font-weight:700;}
+  .btn.tiny{padding:9px;font-size:13px;width:auto;}
+  .btnrow{display:flex;gap:9px;}
+
+  .item{border:1px solid var(--rule);border-radius:10px;background:var(--field);margin-bottom:10px;overflow:hidden;}
+  .item .top{display:flex;align-items:center;gap:10px;padding:13px 13px;}
+  .item .dt{font-weight:800;font-size:15px;}
+  .badge{font-size:11px;font-weight:800;background:var(--ink);color:#fff;border-radius:5px;padding:2px 9px;}
+  .badge.b{background:var(--accent);}
+  .item .sub{font-size:12px;color:var(--muted);margin-left:auto;}
+  .det{padding:0 13px 12px;display:none;}
+  .det.open{display:block;}
+  .det table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  .det td,.det th{border-bottom:1px solid var(--rule);padding:6px 4px;text-align:center;}
+  .det th{font-size:10px;text-transform:uppercase;color:var(--muted);}
+  .det td.l,.det th.l{text-align:left;}
+  .det .acts{display:flex;gap:8px;margin-top:11px;}
+
+  .ta{width:100%;min-height:120px;font-size:12px;padding:10px;border:1px solid var(--rule);border-radius:8px;background:var(--field);font-family:"Roboto Mono","Consolas",monospace;}
+  .note-box{background:var(--soft);border:1px solid var(--rule);border-radius:9px;padding:13px;font-size:13px;margin-bottom:16px;}
+  .note-box b{color:var(--accent);}
+  .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:800;margin:18px 0 7px;}
+  .empty{text-align:center;color:var(--muted);padding:40px 10px;font-size:14px;}
+
+  #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;
+    padding:11px 20px;border-radius:24px;font-size:14px;font-weight:700;opacity:0;transition:.25s;pointer-events:none;z-index:20;}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .overlay{position:fixed;inset:0;background:rgba(20,20,22,.5);display:none;align-items:center;justify-content:center;z-index:30;padding:24px;}
+  .overlay.show{display:flex;}
+  .modal{background:var(--paper);border-radius:14px;padding:20px;max-width:340px;width:100%;}
+  .modal p{margin:0 0 16px;font-size:15px;font-weight:600;}
+</style>
+</head>
+<body>
+  <div class="appbar">
+    <div class="t">LOG · <span>Fase 4</span></div>
+    <div class="status" id="status">…</div>
+  </div>
+  <nav class="tabs">
+    <button data-v="new" class="on">Nuova</button>
+    <button data-v="hist">Storico</button>
+    <button data-v="meas">Misure</button>
+    <button data-v="data">Backup</button>
+  </nav>
+  <main id="view"></main>
+  <div id="toast"></div>
+  <div class="overlay" id="overlay"><div class="modal"><p id="mtext"></p>
+    <div class="btnrow"><button class="btn ghost" id="mno">Annulla</button><button class="btn" id="myes">Conferma</button></div>
+  </div></div>
+
+<script>
+"use strict";
+const DEFS = {
+  A:[
+    {name:"Leg press", sets:3, rep:"10\u201312", load:"61"},
+    {name:"Chest press", sets:3, rep:"10\u201312", load:"25"},
+    {name:"Lat machine (pulldown)", sets:3, rep:"10\u201312", load:"32"},
+    {name:"Shoulder press", sets:2, rep:"10\u201312", load:"15", est:true},
+    {name:"Leg curl", sets:2, rep:"12\u201315", load:"43"},
+    {name:"Triceps pushdown", sets:2, rep:"12\u201315", load:"18"},
+    {name:"Curl bicipiti", sets:2, rep:"12\u201315", load:"18"},
+    {name:"Crunch machine", sets:2, rep:"15", load:"41"}
+  ],
+  B:[
+    {name:"Leg curl", sets:3, rep:"10\u201312", load:"43"},
+    {name:"Leg extension", sets:3, rep:"12\u201315", load:"43"},
+    {name:"Pulley / row", sets:3, rep:"10\u201312", load:"32"},
+    {name:"Chest press", sets:3, rep:"10\u201312", load:"25"},
+    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"3", est:true},
+    {name:"Curl bicipiti", sets:2, rep:"12\u201315", load:"18"},
+    {name:"Triceps pushdown", sets:2, rep:"12\u201315", load:"18"},
+    {name:"Back extension", sets:2, rep:"12\u201315", load:""}
+  ]
+};
+const KEY="f4log_v1";
+const state={ log:{sessions:[],metrics:[],lastBackup:null}, view:"new", type:null,
+              date:todayISO(), warmup:false, editId:null, editData:null, storageOk:false };
+
+function todayISO(){const d=new Date(),p=n=>String(n).padStart(2,"0");return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate());}
+function fmtDate(iso){if(!iso)return"";const a=iso.split("-");return a.length===3?a[2]+"/"+a[1]+"/"+a[0]:iso;}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function esc(s){return(s==null?"":String(s)).replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));}
+
+/* ---------- PERSISTENCE (localStorage) ---------- */
+function loadAll(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw){const o=JSON.parse(raw);
+      state.log.sessions=Array.isArray(o.sessions)?o.sessions:[];
+      state.log.metrics=Array.isArray(o.metrics)?o.metrics:[];
+      state.log.lastBackup=o.lastBackup||null;}
+    localStorage.setItem(KEY+"_probe","1");localStorage.removeItem(KEY+"_probe");
+    state.storageOk=true;
+  }catch(e){state.storageOk=false;}
+}
+function saveAll(){
+  try{localStorage.setItem(KEY,JSON.stringify(state.log));state.storageOk=true;}
+  catch(e){state.storageOk=false;}
+  updateStatus();
+}
+function updateStatus(){
+  const el=document.getElementById("status");if(!el)return;
+  if(state.storageOk){
+    const lb=state.log.lastBackup?fmtDate(state.log.lastBackup):"mai";
+    el.innerHTML="Dati sul telefono <b>\u2713</b><br>Backup: <b>"+esc(lb)+"</b>";
+  } else el.innerHTML="<b>Memoria non disponibile</b><br>esporta subito i dati";
+}
+function backupOverdue(){
+  if(!state.log.sessions.length)return false;
+  if(!state.log.lastBackup)return true;
+  return (new Date(todayISO())-new Date(state.log.lastBackup))/(86400e3)>=7;
+}
+function getLastLoad(name){
+  for(let i=state.log.sessions.length-1;i>=0;i--){
+    const e=state.log.sessions[i].entries.find(x=>x.name===name && x.load!=="" && x.load!=null);
+    if(e)return e.load;
+  }
+  return null;
+}
+
+/* ---------- VIEWS ---------- */
+function render(){
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.v===state.view));
+  const v=document.getElementById("view");
+  if(state.view==="new")v.innerHTML=viewNew();
+  else if(state.view==="hist")v.innerHTML=viewHist();
+  else if(state.view==="meas")v.innerHTML=viewMeas();
+  else v.innerHTML=viewData();
+  bind();updateStatus();window.scrollTo(0,0);
+}
+
+function viewNew(){
+  let h="";
+  if(backupOverdue())h+=`<div class="banner">\u26A0\uFE0F \u00C8 passata pi\u00F9 di una settimana dall'ultimo backup. Vai su <b>Backup</b> e salva su OneDrive.</div>`;
+  h+=`<h2 class="vh">${state.editId?"Modifica seduta":"Nuova seduta"}</h2>
+  <div class="ctrlrow">
+    <label class="fld">Data<input type="date" id="f-date" value="${state.date}"></label>
+    <div class="fld">Seduta
+      <div class="chips">
+        <div class="chip ${state.type==="A"?"on":""}" data-type="A">A</div>
+        <div class="chip ${state.type==="B"?"on":""}" data-type="B">B</div>
+      </div>
+    </div>
+  </div>
+  <label class="wu"><input type="checkbox" id="f-wu" ${state.warmup?"checked":""}> Riscaldamento fatto (cyclette)</label>`;
+  if(!state.type){h+=`<div class="empty">Scegli A o B per caricare gli esercizi.</div>`;return h;}
+  DEFS[state.type].forEach((ex,i)=>{
+    const prev=state.editData?state.editData.entries.find(e=>e.name===ex.name):null;
+    const last=getLastLoad(ex.name);
+    const loadVal=prev?prev.load:(last!=null?last:ex.load);
+    let sets="";
+    for(let s=0;s<ex.sets;s++){
+      const rv=prev&&prev.reps?(prev.reps[s]||""):"";
+      sets+=`<div class="ipt"><span>S${s+1}</span><input inputmode="numeric" class="inp-rep" data-s="${s}" value="${esc(rv)}"></div>`;
+    }
+    h+=`<div class="card ex-card" data-name="${esc(ex.name)}" data-sets="${ex.sets}">
+      <div class="nm">${esc(ex.name)} ${ex.est?'<span class="tg">STIMA</span>':""}</div>
+      <div class="hint">obiettivo ${ex.sets}\u00D7${ex.rep}${ex.load===""?" \u00B7 corpo libero":""}</div>
+      <div class="setrow">
+        <div class="ipt load"><span>Carico kg</span><input inputmode="decimal" class="inp-load" value="${esc(loadVal)}" ${ex.load===""?'placeholder="\u2014"':""}></div>
+        ${sets}
+        <div class="ipt"><span>Marg.</span><input inputmode="numeric" class="inp-rir" value="${esc(prev?prev.rir:"")}"></div>
+      </div>
+      <div class="ipt notew"><span>Note</span><input class="inp-note" value="${esc(prev?prev.note:"")}" placeholder="es. polpaccio ok"></div>
+    </div>`;
+  });
+  h+=`<button class="btn" id="save-sess">${state.editId?"Aggiorna seduta":"Salva seduta"}</button>`;
+  if(state.editId)h+=`<button class="btn ghost" id="cancel-edit" style="margin-top:9px">Annulla modifica</button>`;
+  return h;
+}
+
+function viewHist(){
+  const s=[...state.log.sessions].sort((a,b)=>(b.date+b.id).localeCompare(a.date+a.id));
+  if(!s.length)return`<h2 class="vh">Storico</h2><div class="empty">Nessuna seduta registrata.</div>`;
+  let h=`<h2 class="vh">Storico \u00B7 ${s.length}</h2>`;
+  s.forEach(se=>{
+    const filled=se.entries.filter(e=>e.reps&&e.reps.some(r=>r!=="")).length;
+    const rows=se.entries.map(e=>`<tr><td class="l">${esc(e.name)}</td><td class="mono">${esc(e.load||"\u2013")}</td><td class="mono">${(e.reps||[]).filter(r=>r!=="").join(" / ")||"\u2013"}</td><td class="mono">${esc(e.rir||"\u2013")}</td><td class="l">${esc(e.note||"")}</td></tr>`).join("");
+    h+=`<div class="item">
+      <div class="top" data-toggle="${se.id}">
+        <span class="badge ${se.type==="B"?"b":""}">${se.type}</span>
+        <span class="dt">${fmtDate(se.date)}</span>
+        <span class="sub">${filled} esercizi ${se.warmup?"\u00B7 risc.\u2713":""}</span>
+      </div>
+      <div class="det" id="det-${se.id}">
+        <table><thead><tr><th class="l">Esercizio</th><th>kg</th><th>Rip</th><th>Marg</th><th class="l">Note</th></tr></thead><tbody>${rows}</tbody></table>
+        <div class="acts"><button class="btn ghost tiny" data-edit="${se.id}">Modifica</button><button class="btn ghost tiny" data-del="${se.id}">Elimina</button></div>
+      </div>
+    </div>`;
+  });
+  return h;
+}
+
+function viewMeas(){
+  const m=[...state.log.metrics].sort((a,b)=>b.date.localeCompare(a.date));
+  let h=`<h2 class="vh">Misure di esito</h2>
+  <div class="note-box">Peso <b>1\u00D7/sett</b> (mattina, a digiuno). Vita <b>ogni 2 sett</b>, all'ombelico, rilassato.</div>
+  <div class="card">
+    <div class="setrow">
+      <div class="ipt"><span>Data</span><input type="date" id="m-date" value="${todayISO()}" style="text-align:left"></div>
+      <div class="ipt load"><span>Peso kg</span><input inputmode="decimal" id="m-w"></div>
+      <div class="ipt load"><span>Vita cm</span><input inputmode="decimal" id="m-v"></div>
+    </div>
+    <button class="btn" id="save-meas" style="margin-top:11px">Aggiungi misura</button>
+  </div>`;
+  if(m.length){
+    h+=`<div class="lbl">Storico misure</div><div class="item"><div class="det open"><table><thead><tr><th class="l">Data</th><th>Peso</th><th>Vita</th><th></th></tr></thead><tbody>`;
+    m.forEach(x=>h+=`<tr><td class="l">${fmtDate(x.date)}</td><td class="mono">${esc(x.weight||"\u2013")}</td><td class="mono">${esc(x.waist||"\u2013")}</td><td><button class="btn ghost tiny" data-delm="${x.id}" style="padding:5px 9px">\u2715</button></td></tr>`);
+    h+=`</tbody></table></div></div>`;
+  }
+  return h;
+}
+
+function viewData(){
+  return`<h2 class="vh">Backup &amp; OneDrive</h2>
+  <div class="note-box">I dati vivono <b>nella memoria del telefono</b> e restano anche offline. Il backup su OneDrive \u00E8 la copia di sicurezza: <b>Salva su OneDrive</b> apre la condivisione Android \u2192 scegli OneDrive \u2192 cartella <span class="mono">06_PALESTRA</span>. Due tocchi.</div>
+  <button class="btn" id="share-json">Salva backup su OneDrive (JSON)</button>
+  <button class="btn sec" id="share-csv" style="margin-top:9px">Salva per Excel su OneDrive (CSV)</button>
+  <div class="lbl">In alternativa: copia manuale</div>
+  <div class="btnrow"><button class="btn ghost tiny" id="exp-json" style="flex:1">Mostra JSON</button><button class="btn ghost tiny" id="exp-csv" style="flex:1">Mostra per Excel</button></div>
+  <textarea class="ta" id="exp-out" placeholder="Premi un pulsante qui sopra\u2026" readonly style="margin-top:8px"></textarea>
+  <button class="btn ghost" id="copy-out" style="margin-top:8px">Copia negli appunti</button>
+  <div class="lbl">Ripristina (incolla un backup JSON)</div>
+  <textarea class="ta" id="imp-in" placeholder="Incolla il contenuto del file JSON\u2026"></textarea>
+  <button class="btn" id="do-import" style="margin-top:8px">Importa e sostituisci</button>
+  <button class="btn ghost" id="do-reset" style="margin-top:18px">Azzera tutti i dati</button>`;
+}
+
+/* ---------- EXPORT ---------- */
+function toCSV(){ // semicolon-separated: opens in Italian Excel directly
+  const sep=";";
+  const rows=[["data","seduta","esercizio","carico_kg","s1","s2","s3","margine","note"]];
+  state.log.sessions.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(s=>{
+    s.entries.forEach(e=>{const r=e.reps||[];rows.push([s.date,s.type,e.name,e.load,r[0]||"",r[1]||"",r[2]||"",e.rir,e.note]);});
+  });
+  rows.push([""]);rows.push(["MISURE"]);rows.push(["data","peso_kg","vita_cm"]);
+  state.log.metrics.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>rows.push([m.date,m.weight,m.waist]));
+  return rows.map(r=>r.map(c=>{c=c==null?"":String(c);return /[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(sep)).join("\r\n");
+}
+function toTSV(){
+  const rows=[["data","seduta","esercizio","carico_kg","s1","s2","s3","margine","note"]];
+  state.log.sessions.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(s=>{
+    s.entries.forEach(e=>{const r=e.reps||[];rows.push([s.date,s.type,e.name,e.load,r[0]||"",r[1]||"",r[2]||"",e.rir,e.note]);});
+  });
+  rows.push([""]);rows.push(["MISURE"]);rows.push(["data","peso_kg","vita_cm"]);
+  state.log.metrics.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>rows.push([m.date,m.weight,m.waist]));
+  return rows.map(r=>r.map(c=>(c==null?"":String(c)).replace(/[\t\r\n]/g," ")).join("\t")).join("\n");
+}
+function markBackup(){state.log.lastBackup=todayISO();saveAll();}
+async function shareFile(filename,text,mime){
+  try{
+    const file=new File([text],filename,{type:mime});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:filename});
+      markBackup();toast("Condiviso \u2713");return true;
+    }
+  }catch(e){ if(e && e.name==="AbortError") return false; }
+  try{
+    const u=URL.createObjectURL(new Blob([text],{type:mime}));
+    const a=document.createElement("a");a.href=u;a.download=filename;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(u);a.remove();},600);
+    markBackup();toast("File scaricato \u2192 spostalo su OneDrive");return true;
+  }catch(e){toast("Usa la copia manuale qui sotto");return false;}
+}
+
+/* ---------- ACTIONS ---------- */
+function saveSession(){
+  if(!state.type){toast("Scegli A o B");return;}
+  const dEl=document.getElementById("f-date");if(dEl&&dEl.value)state.date=dEl.value;
+  const wEl=document.getElementById("f-wu");if(wEl)state.warmup=wEl.checked;
+  const entries=[];
+  document.querySelectorAll(".ex-card").forEach(card=>{
+    const name=card.dataset.name, nsets=parseInt(card.dataset.sets,10);
+    const loadEl=card.querySelector("input.inp-load");
+    const rirEl=card.querySelector("input.inp-rir");
+    const noteEl=card.querySelector("input.inp-note");
+    const reps=[];
+    for(let s=0;s<nsets;s++){const el=card.querySelector('input.inp-rep[data-s="'+s+'"]');reps.push(el?el.value.trim():"");}
+    entries.push({name,
+      load:loadEl?loadEl.value.trim():"",
+      reps,
+      rir:rirEl?rirEl.value.trim():"",
+      note:noteEl?noteEl.value.trim():""});
+  });
+  if(!entries.length){toast("Nessun esercizio in pagina");return;}
+  if(state.editId){
+    const idx=state.log.sessions.findIndex(s=>s.id===state.editId);
+    if(idx>=0)state.log.sessions[idx]={...state.log.sessions[idx],date:state.date,type:state.type,warmup:state.warmup,entries};
+  }else{
+    state.log.sessions.push({id:uid(),date:state.date,type:state.type,warmup:state.warmup,entries});
+  }
+  saveAll();
+  if(!state.storageOk){toast("ATTENZIONE: memoria non disponibile, esporta subito");}
+  else toast(state.editId?"Seduta aggiornata \u2713":"Seduta salvata \u2713");
+  resetForm();state.view="hist";render();
+}
+function resetForm(){state.editId=null;state.editData=null;state.type=null;state.date=todayISO();state.warmup=false;}
+function editSession(id){
+  const s=state.log.sessions.find(x=>x.id===id);if(!s)return;
+  state.editId=id;state.editData=s;state.type=s.type;state.date=s.date;state.warmup=!!s.warmup;state.view="new";render();
+}
+function saveMeas(){
+  const date=document.getElementById("m-date").value||todayISO();
+  const w=document.getElementById("m-w").value.trim(), v=document.getElementById("m-v").value.trim();
+  if(!w&&!v){toast("Inserisci almeno un valore");return;}
+  state.log.metrics.push({id:uid(),date,weight:w,waist:v});
+  saveAll();render();toast("Misura aggiunta \u2713");
+}
+function doImport(){
+  const t=document.getElementById("imp-in").value.trim();if(!t){toast("Incolla un backup");return;}
+  let o;try{o=JSON.parse(t);}catch(e){toast("JSON non valido");return;}
+  if(!o.sessions&&!o.metrics){toast("Formato non riconosciuto");return;}
+  ask("Sostituire i dati attuali con il backup?",()=>{
+    state.log.sessions=Array.isArray(o.sessions)?o.sessions:[];
+    state.log.metrics=Array.isArray(o.metrics)?o.metrics:[];
+    state.log.lastBackup=o.lastBackup||state.log.lastBackup;
+    saveAll();state.view="hist";render();toast("Importato \u2713");});
+}
+async function copy(txt){
+  if(!txt){toast("Niente da copiare");return;}
+  try{await navigator.clipboard.writeText(txt);toast("Copiato \u2713");}
+  catch(e){
+    const ta=document.getElementById("exp-out");
+    if(ta){ta.removeAttribute("readonly");ta.focus();ta.select();
+      try{document.execCommand("copy");toast("Copiato \u2713");}catch(_){toast("Seleziona il testo e copia a mano");}
+      ta.setAttribute("readonly","");}
+  }
+}
+
+/* ---------- BIND ---------- */
+function bind(){
+  document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{state.view=b.dataset.v;render();});
+  if(state.view==="new"){
+    const d=document.getElementById("f-date");if(d)d.onchange=e=>state.date=e.target.value;
+    const w=document.getElementById("f-wu");if(w)w.onchange=e=>state.warmup=e.target.checked;
+    document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{state.type=c.dataset.type;render();});
+    const sv=document.getElementById("save-sess");if(sv)sv.onclick=saveSession;
+    const ce=document.getElementById("cancel-edit");if(ce)ce.onclick=()=>{resetForm();render();};
+  }
+  if(state.view==="hist"){
+    document.querySelectorAll("[data-toggle]").forEach(t=>t.onclick=()=>{const el=document.getElementById("det-"+t.dataset.toggle);if(el)el.classList.toggle("open");});
+    document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editSession(b.dataset.edit));
+    document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>ask("Eliminare questa seduta?",()=>{state.log.sessions=state.log.sessions.filter(s=>s.id!==b.dataset.del);saveAll();render();toast("Eliminata");}));
+  }
+  if(state.view==="meas"){
+    const sm=document.getElementById("save-meas");if(sm)sm.onclick=saveMeas;
+    document.querySelectorAll("[data-delm]").forEach(b=>b.onclick=()=>{state.log.metrics=state.log.metrics.filter(x=>x.id!==b.dataset.delm);saveAll();render();});
+  }
+  if(state.view==="data"){
+    document.getElementById("share-json").onclick=()=>shareFile("log_fase4_backup.json",JSON.stringify(state.log,null,2),"application/json");
+    document.getElementById("share-csv").onclick=()=>shareFile("log_fase4.csv","\uFEFF"+toCSV(),"text/csv");
+    document.getElementById("exp-json").onclick=()=>{document.getElementById("exp-out").value=JSON.stringify(state.log,null,2);markBackup();};
+    document.getElementById("exp-csv").onclick=()=>{document.getElementById("exp-out").value=toTSV();};
+    document.getElementById("copy-out").onclick=()=>copy(document.getElementById("exp-out").value);
+    document.getElementById("do-import").onclick=doImport;
+    document.getElementById("do-reset").onclick=()=>ask("Azzerare TUTTI i dati? Esegui prima un backup.",()=>{state.log={sessions:[],metrics:[],lastBackup:null};saveAll();render();toast("Dati azzerati");});
+  }
+}
+
+/* ---------- UI helpers ---------- */
+let toastT;
+function toast(m){const t=document.getElementById("toast");if(!t)return;t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1900);}
+let yesCb=null;
+function ask(msg,cb){yesCb=cb;document.getElementById("mtext").textContent=msg;document.getElementById("overlay").classList.add("show");}
+document.getElementById("mno").onclick=()=>{document.getElementById("overlay").classList.remove("show");yesCb=null;};
+document.getElementById("myes").onclick=()=>{document.getElementById("overlay").classList.remove("show");if(yesCb)yesCb();yesCb=null;};
+
+/* ---------- INIT ---------- */
+loadAll();render();
+if(navigator.storage && navigator.storage.persist){navigator.storage.persist().catch(()=>{});}
+if("serviceWorker" in navigator && location.protocol==="https:"){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
