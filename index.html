@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#17181C">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
-<title>Log Fase 4</title>
+<title>Log Fase 5</title>
 <style>
   :root{
     --paper:#FBFAF7; --ink:#17181C; --muted:#6C6A63; --rule:#E2DFD6;
@@ -38,7 +38,7 @@
   label.fld{display:flex;flex-direction:column;gap:4px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;}
   input[type=date],input.txt{font-size:16px;padding:11px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--field);color:var(--ink);font-family:inherit;}
   .chips{display:flex;gap:8px;}
-  .chip{padding:11px 20px;border:1.5px solid var(--rule);border-radius:8px;background:var(--field);font-weight:800;font-size:15px;color:var(--muted);}
+  .chip{padding:11px 13px;border:1.5px solid var(--rule);border-radius:8px;background:var(--field);font-weight:800;font-size:15px;color:var(--muted);}
   .chip.on{background:var(--ink);color:#fff;border-color:var(--ink);}
   .wu{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;}
   .wu input{width:20px;height:20px;accent-color:var(--accent);}
@@ -92,7 +92,7 @@
 </head>
 <body>
   <div class="appbar">
-    <div class="t">LOG · <span>Fase 4</span></div>
+    <div class="t">LOG · <span>Fase 5</span></div>
     <div class="status" id="status">…</div>
   </div>
   <nav class="tabs">
@@ -110,25 +110,39 @@
 <script>
 "use strict";
 const DEFS = {
-  A:[
-    {name:"Leg press", sets:3, rep:"10\u201312", load:"61"},
-    {name:"Chest press", sets:3, rep:"10\u201312", load:"25"},
-    {name:"Lat machine (pulldown)", sets:3, rep:"10\u201312", load:"32"},
-    {name:"Shoulder press", sets:2, rep:"10\u201312", load:"15", est:true},
-    {name:"Leg curl", sets:2, rep:"12\u201315", load:"43"},
-    {name:"Triceps pushdown", sets:2, rep:"12\u201315", load:"18"},
-    {name:"Curl bicipiti", sets:2, rep:"12\u201315", load:"18"},
-    {name:"Crunch machine", sets:2, rep:"15", load:"41"}
+  U1:[
+    {name:"Chest press", sets:4, rep:"8\u201310", load:"28"},
+    {name:"Shoulder press (manubri)", sets:3, rep:"10\u201312", load:"6", est:true},
+    {name:"Lat machine (pulldown)", sets:3, rep:"8\u201310", load:"34"},
+    {name:"Pulley / row", sets:3, rep:"10\u201312", load:"34"},
+    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"5"},
+    {name:"Triceps pushdown", sets:3, rep:"12\u201315", load:"23"},
+    {name:"Curl bicipiti", sets:2, rep:"12\u201315", load:"23"}
   ],
-  B:[
-    {name:"Leg curl", sets:3, rep:"10\u201312", load:"43"},
-    {name:"Leg extension", sets:3, rep:"12\u201315", load:"43"},
-    {name:"Pulley / row", sets:3, rep:"10\u201312", load:"32"},
+  L1:[
+    {name:"Leg press", sets:4, rep:"8\u201310", load:"71"},
+    {name:"Leg curl", sets:3, rep:"12\u201315", load:"48"},
+    {name:"Leg extension", sets:3, rep:"12\u201315", load:"48"},
+    {name:"Calf raise", sets:3, rep:"12\u201315", load:"", est:true},
+    {name:"Crunch machine", sets:3, rep:"15", load:"45"},
+    {name:"Back extension", sets:2, rep:"12\u201315", load:"5"}
+  ],
+  U2:[
+    {name:"Pulley / row", sets:4, rep:"8\u201310", load:"34"},
+    {name:"Lat machine (pulldown)", sets:3, rep:"10\u201312", load:"34"},
     {name:"Chest press", sets:3, rep:"10\u201312", load:"25"},
-    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"3", est:true},
-    {name:"Curl bicipiti", sets:2, rep:"12\u201315", load:"18"},
-    {name:"Triceps pushdown", sets:2, rep:"12\u201315", load:"18"},
-    {name:"Back extension", sets:2, rep:"12\u201315", load:""}
+    {name:"Shoulder press (manubri)", sets:3, rep:"10\u201312", load:"6", est:true},
+    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"5"},
+    {name:"Curl bicipiti", sets:3, rep:"12\u201315", load:"23"},
+    {name:"Triceps pushdown", sets:2, rep:"12\u201315", load:"23"}
+  ],
+  L2:[
+    {name:"Leg press", sets:3, rep:"12\u201315", load:"66"},
+    {name:"Leg curl", sets:3, rep:"10\u201312", load:"48"},
+    {name:"Leg extension", sets:3, rep:"12\u201315", load:"48"},
+    {name:"Calf raise", sets:3, rep:"15", load:"", est:true},
+    {name:"Crunch machine", sets:3, rep:"15", load:"45"},
+    {name:"Back extension", sets:2, rep:"15", load:"5"}
   ]
 };
 const KEY="f4log_v1";
@@ -196,13 +210,12 @@ function viewNew(){
     <label class="fld">Data<input type="date" id="f-date" value="${state.date}"></label>
     <div class="fld">Seduta
       <div class="chips">
-        <div class="chip ${state.type==="A"?"on":""}" data-type="A">A</div>
-        <div class="chip ${state.type==="B"?"on":""}" data-type="B">B</div>
+        ${Object.keys(DEFS).map(k=>`<div class="chip ${state.type===k?"on":""}" data-type="${k}">${k}</div>`).join("")}
       </div>
     </div>
   </div>
   <label class="wu"><input type="checkbox" id="f-wu" ${state.warmup?"checked":""}> Riscaldamento fatto (cyclette)</label>`;
-  if(!state.type){h+=`<div class="empty">Scegli A o B per caricare gli esercizi.</div>`;return h;}
+  if(!state.type||!DEFS[state.type]){h+=`<div class="empty">Scegli la seduta (U1, L1, U2, L2) per caricare gli esercizi.</div>`;return h;}
   DEFS[state.type].forEach((ex,i)=>{
     const prev=state.editData?state.editData.entries.find(e=>e.name===ex.name):null;
     const last=getLastLoad(ex.name);
@@ -237,7 +250,7 @@ function viewHist(){
     const rows=se.entries.map(e=>`<tr><td class="l">${esc(e.name)}</td><td class="mono">${esc(e.load||"\u2013")}</td><td class="mono">${(e.reps||[]).filter(r=>r!=="").join(" / ")||"\u2013"}</td><td class="mono">${esc(e.rir||"\u2013")}</td><td class="l">${esc(e.note||"")}</td></tr>`).join("");
     h+=`<div class="item">
       <div class="top" data-toggle="${se.id}">
-        <span class="badge ${se.type==="B"?"b":""}">${se.type}</span>
+        <span class="badge ${String(se.type).startsWith("L")||se.type==="B"?"b":""}">${se.type}</span>
         <span class="dt">${fmtDate(se.date)}</span>
         <span class="sub">${filled} esercizi ${se.warmup?"\u00B7 risc.\u2713":""}</span>
       </div>
@@ -253,18 +266,22 @@ function viewHist(){
 function viewMeas(){
   const m=[...state.log.metrics].sort((a,b)=>b.date.localeCompare(a.date));
   let h=`<h2 class="vh">Misure di esito</h2>
-  <div class="note-box">Peso <b>1\u00D7/sett</b> (mattina, a digiuno). Vita <b>ogni 2 sett</b>, all'ombelico, rilassato.</div>
+  <div class="note-box">Peso <b>1\u00D7/sett</b> (mattina, digiuno). Vita <b>ogni 2 sett</b> (ombelico, rilassato, media di 2\u20133 letture). Braccia <b>ogni 2\u20134 sett</b> (met\u00E0 tra spalla e gomito, rilassato) \u2014 facoltative.</div>
   <div class="card">
     <div class="setrow">
       <div class="ipt"><span>Data</span><input type="date" id="m-date" value="${todayISO()}" style="text-align:left"></div>
       <div class="ipt load"><span>Peso kg</span><input inputmode="decimal" id="m-w"></div>
       <div class="ipt load"><span>Vita cm</span><input inputmode="decimal" id="m-v"></div>
     </div>
+    <div class="setrow" style="margin-top:8px">
+      <div class="ipt"><span>Braccio dx cm</span><input inputmode="decimal" id="m-adx"></div>
+      <div class="ipt"><span>Braccio sx cm</span><input inputmode="decimal" id="m-asx"></div>
+    </div>
     <button class="btn" id="save-meas" style="margin-top:11px">Aggiungi misura</button>
   </div>`;
   if(m.length){
-    h+=`<div class="lbl">Storico misure</div><div class="item"><div class="det open"><table><thead><tr><th class="l">Data</th><th>Peso</th><th>Vita</th><th></th></tr></thead><tbody>`;
-    m.forEach(x=>h+=`<tr><td class="l">${fmtDate(x.date)}</td><td class="mono">${esc(x.weight||"\u2013")}</td><td class="mono">${esc(x.waist||"\u2013")}</td><td><button class="btn ghost tiny" data-delm="${x.id}" style="padding:5px 9px">\u2715</button></td></tr>`);
+    h+=`<div class="lbl">Storico misure</div><div class="item"><div class="det open"><table><thead><tr><th class="l">Data</th><th>Peso</th><th>Vita</th><th>Br.dx</th><th>Br.sx</th><th></th></tr></thead><tbody>`;
+    m.forEach(x=>h+=`<tr><td class="l">${fmtDate(x.date)}</td><td class="mono">${esc(x.weight||"\u2013")}</td><td class="mono">${esc(x.waist||"\u2013")}</td><td class="mono">${esc(x.armR||"\u2013")}</td><td class="mono">${esc(x.armL||"\u2013")}</td><td><button class="btn ghost tiny" data-delm="${x.id}" style="padding:5px 9px">\u2715</button></td></tr>`);
     h+=`</tbody></table></div></div>`;
   }
   return h;
@@ -292,8 +309,8 @@ function toCSV(){ // semicolon-separated: opens in Italian Excel directly
   state.log.sessions.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(s=>{
     s.entries.forEach(e=>{const r=e.reps||[];rows.push([s.date,s.type,e.name,e.load,r[0]||"",r[1]||"",r[2]||"",e.rir,e.note]);});
   });
-  rows.push([""]);rows.push(["MISURE"]);rows.push(["data","peso_kg","vita_cm"]);
-  state.log.metrics.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>rows.push([m.date,m.weight,m.waist]));
+  rows.push([""]);rows.push(["MISURE"]);rows.push(["data","peso_kg","vita_cm","braccio_dx_cm","braccio_sx_cm"]);
+  state.log.metrics.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>rows.push([m.date,m.weight,m.waist,m.armR||"",m.armL||""]));
   return rows.map(r=>r.map(c=>{c=c==null?"":String(c);return /[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(sep)).join("\r\n");
 }
 function toTSV(){
@@ -301,8 +318,8 @@ function toTSV(){
   state.log.sessions.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(s=>{
     s.entries.forEach(e=>{const r=e.reps||[];rows.push([s.date,s.type,e.name,e.load,r[0]||"",r[1]||"",r[2]||"",e.rir,e.note]);});
   });
-  rows.push([""]);rows.push(["MISURE"]);rows.push(["data","peso_kg","vita_cm"]);
-  state.log.metrics.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>rows.push([m.date,m.weight,m.waist]));
+  rows.push([""]);rows.push(["MISURE"]);rows.push(["data","peso_kg","vita_cm","braccio_dx_cm","braccio_sx_cm"]);
+  state.log.metrics.slice().sort((a,b)=>a.date.localeCompare(b.date)).forEach(m=>rows.push([m.date,m.weight,m.waist,m.armR||"",m.armL||""]));
   return rows.map(r=>r.map(c=>(c==null?"":String(c)).replace(/[\t\r\n]/g," ")).join("\t")).join("\n");
 }
 function markBackup(){state.log.lastBackup=todayISO();saveAll();}
@@ -325,7 +342,7 @@ async function shareFile(filename,text,mime){
 
 /* ---------- ACTIONS ---------- */
 function saveSession(){
-  if(!state.type){toast("Scegli A o B");return;}
+  if(!state.type){toast("Scegli la seduta");return;}
   const dEl=document.getElementById("f-date");if(dEl&&dEl.value)state.date=dEl.value;
   const wEl=document.getElementById("f-wu");if(wEl)state.warmup=wEl.checked;
   const entries=[];
@@ -357,13 +374,15 @@ function saveSession(){
 function resetForm(){state.editId=null;state.editData=null;state.type=null;state.date=todayISO();state.warmup=false;}
 function editSession(id){
   const s=state.log.sessions.find(x=>x.id===id);if(!s)return;
+  if(!DEFS[s.type]){toast("Seduta di una scheda precedente: consultabile, non modificabile");return;}
   state.editId=id;state.editData=s;state.type=s.type;state.date=s.date;state.warmup=!!s.warmup;state.view="new";render();
 }
 function saveMeas(){
   const date=document.getElementById("m-date").value||todayISO();
   const w=document.getElementById("m-w").value.trim(), v=document.getElementById("m-v").value.trim();
-  if(!w&&!v){toast("Inserisci almeno un valore");return;}
-  state.log.metrics.push({id:uid(),date,weight:w,waist:v});
+  const adx=document.getElementById("m-adx").value.trim(), asx=document.getElementById("m-asx").value.trim();
+  if(!w&&!v&&!adx&&!asx){toast("Inserisci almeno un valore");return;}
+  state.log.metrics.push({id:uid(),date,weight:w,waist:v,armR:adx,armL:asx});
   saveAll();render();toast("Misura aggiunta \u2713");
 }
 function doImport(){

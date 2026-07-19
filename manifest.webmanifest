@@ -1,7 +1,7 @@
 {
-  "name": "Log Allenamento Fase 4",
-  "short_name": "Log Fase 4",
-  "description": "Registro allenamenti - Scheda Athletic Re-entry Fase 4",
+  "name": "Log Allenamento Fase 5",
+  "short_name": "Log Fase 5",
+  "description": "Registro allenamenti - Scheda Athletic Re-entry Fase 5",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
