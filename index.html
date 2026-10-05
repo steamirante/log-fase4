@@ -47,6 +47,8 @@
   .card .nm{font-weight:800;font-size:15px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
   .card .tg{font-size:9px;letter-spacing:.1em;background:var(--accent);color:#fff;border-radius:3px;padding:1px 5px;font-weight:700;}
   .card .hint{font-size:11.5px;color:var(--muted);margin:2px 0 9px;font-weight:600;}
+  .card .tg.up{background:var(--ok);}
+  .card .lastl{font-size:11.5px;color:var(--ink);margin:-5px 0 9px;font-family:"Roboto Mono","Consolas",monospace;}
   .setrow{display:flex;gap:7px;align-items:flex-end;}
   .ipt{display:flex;flex-direction:column;gap:3px;flex:1;}
   .ipt span{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;}
@@ -92,7 +94,7 @@
 </head>
 <body>
   <div class="appbar">
-    <div class="t">LOG · <span>Fase 5</span></div>
+    <div class="t">LOG · <span>Fase 5.1</span></div>
     <div class="status" id="status">…</div>
   </div>
   <nav class="tabs">
@@ -112,37 +114,37 @@
 const DEFS = {
   U1:[
     {name:"Chest press", sets:4, rep:"8\u201310", load:"28"},
-    {name:"Shoulder press (manubri)", sets:3, rep:"10\u201312", load:"6", est:true},
-    {name:"Lat machine (pulldown)", sets:3, rep:"8\u201310", load:"34"},
-    {name:"Pulley / row", sets:3, rep:"10\u201312", load:"34"},
-    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"5"},
+    {name:"Shoulder press (manubri)", sets:3, rep:"10\u201312", load:"8"},
+    {name:"Lat machine (pulldown)", sets:3, rep:"8\u201310", load:"38"},
+    {name:"Pulley / row", sets:3, rep:"10\u201312", load:"36"},
+    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"6"},
     {name:"Triceps pushdown", sets:3, rep:"12\u201315", load:"23"},
     {name:"Curl bicipiti", sets:2, rep:"12\u201315", load:"23"}
   ],
   L1:[
-    {name:"Leg press", sets:4, rep:"8\u201310", load:"71"},
-    {name:"Leg curl", sets:3, rep:"12\u201315", load:"48"},
-    {name:"Leg extension", sets:3, rep:"12\u201315", load:"48"},
-    {name:"Calf raise", sets:3, rep:"12\u201315", load:"", est:true},
+    {name:"Leg press", sets:4, rep:"8\u201310", load:"76"},
+    {name:"Leg curl", sets:3, rep:"12\u201315", load:"50"},
+    {name:"Leg extension", sets:3, rep:"12\u201315", load:"50"},
+    {name:"Calf raise", sets:3, rep:"12\u201315", load:"35"},
     {name:"Crunch machine", sets:3, rep:"15", load:"45"},
-    {name:"Back extension", sets:2, rep:"12\u201315", load:"5"}
+    {name:"Back extension", sets:2, rep:"12\u201315", load:"10"}
   ],
   U2:[
-    {name:"Pulley / row", sets:4, rep:"8\u201310", load:"34"},
-    {name:"Lat machine (pulldown)", sets:3, rep:"10\u201312", load:"34"},
-    {name:"Chest press", sets:3, rep:"10\u201312", load:"25"},
-    {name:"Shoulder press (manubri)", sets:3, rep:"10\u201312", load:"6", est:true},
-    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"5"},
+    {name:"Pulley / row", sets:4, rep:"8\u201310", load:"38"},
+    {name:"Lat machine (pulldown)", sets:3, rep:"10\u201312", load:"36"},
+    {name:"Chest press", sets:3, rep:"10\u201312", load:"27"},
+    {name:"Shoulder press (manubri)", sets:3, rep:"10\u201312", load:"8"},
+    {name:"Alzate laterali", sets:3, rep:"12\u201315", load:"6"},
     {name:"Curl bicipiti", sets:3, rep:"12\u201315", load:"23"},
     {name:"Triceps pushdown", sets:2, rep:"12\u201315", load:"23"}
   ],
   L2:[
-    {name:"Leg press", sets:3, rep:"12\u201315", load:"66"},
-    {name:"Leg curl", sets:3, rep:"10\u201312", load:"48"},
-    {name:"Leg extension", sets:3, rep:"12\u201315", load:"48"},
-    {name:"Calf raise", sets:3, rep:"15", load:"", est:true},
+    {name:"Leg press", sets:3, rep:"12\u201315", load:"71"},
+    {name:"Leg curl", sets:3, rep:"10\u201312", load:"50"},
+    {name:"Leg extension", sets:3, rep:"12\u201315", load:"50"},
+    {name:"Calf alla leg press (gamba tesa)", sets:3, rep:"12\u201315", load:"45", est:true},
     {name:"Crunch machine", sets:3, rep:"15", load:"45"},
-    {name:"Back extension", sets:2, rep:"15", load:"5"}
+    {name:"Back extension", sets:2, rep:"15", load:"10"}
   ]
 };
 const KEY="f4log_v1";
@@ -190,6 +192,35 @@ function getLastLoad(name){
   }
   return null;
 }
+function num(v){if(v==null)return NaN;const n=parseFloat(String(v).replace(",","."));return n;}
+function sortedSessions(){return state.log.sessions.slice().sort((a,b)=>(a.date+a.id).localeCompare(b.date+b.id));}
+function lastSameType(name,type){
+  const ss=sortedSessions();
+  for(let i=ss.length-1;i>=0;i--){
+    if(ss[i].type!==type)continue;
+    const e=ss[i].entries.find(x=>x.name===name);
+    if(e && e.reps && e.reps.some(r=>String(r).trim()!==""))return e;
+  }
+  return null;
+}
+function topOfRange(rep){const parts=String(rep).split(/[\u2013-]/);return parseInt(parts[parts.length-1],10);}
+function readyToRise(e,ex){
+  if(!e)return false;
+  const top=topOfRange(ex.rep);
+  const reps=(e.reps||[]).map(r=>parseInt(r,10));
+  if(reps.length<ex.sets)return false;
+  for(let s=0;s<ex.sets;s++){if(!(reps[s]>=top))return false;}
+  const rir=parseInt(e.rir,10);
+  return rir>=1;
+}
+function prefillLoad(ex,type){
+  const same=lastSameType(ex.name,type);
+  const last=(same&&same.load!==""&&same.load!=null)?same.load:getLastLoad(ex.name);
+  if(last==null||last==="")return ex.load;
+  const a=num(last),b=num(ex.load);
+  if(!isNaN(a)&&!isNaN(b)&&b>a)return ex.load;
+  return last;
+}
 
 /* ---------- VIEWS ---------- */
 function render(){
@@ -218,16 +249,25 @@ function viewNew(){
   if(!state.type||!DEFS[state.type]){h+=`<div class="empty">Scegli la seduta (U1, L1, U2, L2) per caricare gli esercizi.</div>`;return h;}
   DEFS[state.type].forEach((ex,i)=>{
     const prev=state.editData?state.editData.entries.find(e=>e.name===ex.name):null;
-    const last=getLastLoad(ex.name);
-    const loadVal=prev?prev.load:(last!=null?last:ex.load);
+    const same=prev?null:lastSameType(ex.name,state.type);
+    const loadVal=prev?prev.load:prefillLoad(ex,state.type);
+    let badge="", lastLine="";
+    if(same){
+      const repsTxt=(same.reps||[]).filter(r=>String(r).trim()!=="").join("/");
+      lastLine=`<div class="lastl">Ultima: ${esc(same.load||"\u2013")} kg \u00B7 ${esc(repsTxt)} \u00B7 marg ${esc(same.rir||"\u2013")}</div>`;
+      const raised=!isNaN(num(loadVal))&&!isNaN(num(same.load))&&num(loadVal)>num(same.load);
+      if(raised)badge='<span class="tg up">NUOVO CARICO</span>';
+      else if(readyToRise(same,ex))badge='<span class="tg up">\u2191 PRONTO A SALIRE</span>';
+    }
     let sets="";
     for(let s=0;s<ex.sets;s++){
       const rv=prev&&prev.reps?(prev.reps[s]||""):"";
       sets+=`<div class="ipt"><span>S${s+1}</span><input inputmode="numeric" class="inp-rep" data-s="${s}" value="${esc(rv)}"></div>`;
     }
     h+=`<div class="card ex-card" data-name="${esc(ex.name)}" data-sets="${ex.sets}">
-      <div class="nm">${esc(ex.name)} ${ex.est?'<span class="tg">STIMA</span>':""}</div>
+      <div class="nm">${esc(ex.name)} ${ex.est&&!same?'<span class="tg">STIMA</span>':""}${badge}</div>
       <div class="hint">obiettivo ${ex.sets}\u00D7${ex.rep}${ex.load===""?" \u00B7 corpo libero":""}</div>
+      ${lastLine}
       <div class="setrow">
         <div class="ipt load"><span>Carico kg</span><input inputmode="decimal" class="inp-load" value="${esc(loadVal)}" ${ex.load===""?'placeholder="\u2014"':""}></div>
         ${sets}
